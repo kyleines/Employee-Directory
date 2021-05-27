@@ -15,6 +15,7 @@ const dataUrl = "https://randomuser.me/api/?exc=gender,login,registered,phone,id
 const gallery = document.getElementById("gallery");
 const body = document.querySelector("body");
 const script = document.querySelector("script");
+const searchContainer = document.getElementsByClassName("search-container")[0];
 
 
 
@@ -139,7 +140,37 @@ function changeModal(element) {
 
 
 
+//------------------------------
+//          SEARCH
+//------------------------------
+function addSearch() {
+    const form = document.createElement("form");
+    form.action = "#";
+    form.method = "get";
 
+    form.insertAdjacentHTML("beforeend", `
+        <input type="search" id="search-input" class="search-input" placeholder="Search...">
+        <input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
+    `);
+
+    searchContainer.appendChild(form);
+}
+
+function getInput() {
+    const input = document.getElementById("search-input").value;
+    return input;
+}
+
+function search(employees, input) {
+    let results = [];
+    employees.forEach(person => {
+        const name = `${person.name.first} ${person.name.last}`;
+        if (name.toLowerCase().includes(input.toLowerCase())) {
+            results.push(person);
+        }
+    });
+    return results;
+}
 
 
 
@@ -150,20 +181,33 @@ function changeModal(element) {
 //      EVENT LISTENERS
 //------------------------------
 window.addEventListener("load", async () => {
-    const employees = await getEmployees(dataUrl);
-    generateHTML(employees);
+    addSearch();
 
+    const employees = await getEmployees(dataUrl);
+    generateHTML(search(employees, getInput()));
+    
+    searchContainer.addEventListener("click", (e) => {
+        if (e.target.id === "search-submit") {
+            gallery.innerHTML = "";
+            generateHTML(search(employees, getInput())); 
+        }
+    })
+    searchContainer.addEventListener("keyup", (e) => {
+        gallery.innerHTML = "";
+        generateHTML(search(employees, getInput())); 
+    })
+    
     body.addEventListener("click", (e) => {
-        getSelectedProfile(employees, openModal(e.target));
+        getSelectedProfile(search(employees, getInput()), openModal(e.target));
         
         if (e.target.tagName === "BUTTON" || e.target.parentElement.tagName === "BUTTON") {
             document.getElementsByClassName("modal-container")[0].remove();
 
             if (e.target.id === "modal-prev") {
-                getSelectedProfile(employees, changeModal(e.target), true, false);
+                getSelectedProfile(search(employees, getInput()), changeModal(e.target), true, false);
             }
             if (e.target.id === "modal-next") {
-                getSelectedProfile(employees, changeModal(e.target), false, true);
+                getSelectedProfile(search(employees, getInput()), changeModal(e.target), false, true);
             }
         }
     });
