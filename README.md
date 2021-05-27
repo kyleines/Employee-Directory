@@ -3,7 +3,7 @@
 ### Welcome to my Employee Directory for the Team Treehouse: FSJS Techdegree - Unit 5 Project.
 
 Upon page load, a list of twelve random employees will be generated using an API request to [randomuser.me](https://randomuser.me/). \
-Selecting an employee opens a modal window with more details about that person. \
+Selecting an employee opens a modal window displaying more details about that person. \
 Users can filter the list by using the Searchbar feature, making finding co-workers faster and easier.
 
 This apps's features include: \
