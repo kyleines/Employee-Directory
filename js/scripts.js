@@ -98,11 +98,11 @@ function generateModal(profile) {
         <p class="modal-text">${profile.email}</p>
         <p class="modal-text cap">${profile.location.city}</p>
         <hr>
-        <p class="modal-text">${profile.cell}</p>
+        <p class="modal-text">${format(profile.cell, "cell")}</p>
         <p class="modal-text">${profile.location.street.number} ${profile.location.street.name}., 
                                 ${profile.location.city}, 
                                 ${profile.location.state} ${profile.location.postcode}</p>
-        <p class="modal-text">${profile.dob.date}</p>
+        <p class="modal-text">Birthday: ${format(profile.dob.date, "date")}</p>
     `);
 
     const modalButtons = document.createElement("div");
@@ -119,6 +119,16 @@ function generateModal(profile) {
     container.appendChild(modal);
     container.appendChild(modalButtons);
     body.insertBefore(container, script);
+}
+function format(data, type) {
+    let newData = "";
+    if (type === "date") {
+        const birthday = new Date(Date.parse(data));
+        newData = `${birthday.getMonth()+1}/${birthday.getDate()}/${birthday.getFullYear()}`;
+    } else if (type === "cell") {
+        newData = data.replace("-", " ");
+    }
+    return newData;
 }
 
 function openModal(element) {
