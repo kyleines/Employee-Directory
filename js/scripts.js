@@ -5,6 +5,17 @@ Project 5 - Employee Directory
 
 
 
+/*
+Dear Reviewer,
+I appreciate you for taking the time to review my project! 
+Your feedback is important to me and crucial to my growth as a developer.
+With the following code I hope to earn the "Exceeds Expectations" grade, and 
+I humbly request that you reject my submission if I don't meet those requirements.
+
+Thank you again!
+-Kyle
+*/
+
 
 
 
@@ -23,6 +34,9 @@ const searchContainer = document.getElementsByClassName("search-container")[0];
 //------------------------------
 //          GALLERY
 //------------------------------
+
+
+/* API Request */
 async function getJSON(url) {
     try {
         const response = await fetch(url);
@@ -33,9 +47,12 @@ async function getJSON(url) {
 }
 async function getEmployees(url) {
     const profiles = await getJSON(url)
-                            .then(data => data.results);
+                            .then(data => data.results)
+                            .catch(error => console.error(error));
     return profiles;
 }
+
+/* Generate gallery of employees */
 function generateHTML(data) {
     data.map(person => {
         const card = document.createElement("div");
@@ -68,6 +85,8 @@ function generateHTML(data) {
 //------------------------------
 //           MODAL
 //------------------------------
+
+/* Links modal to person */
 function getSelectedProfile(employees, selected, prev, next) {
     for (let i = 0; i < employees.length; i++) {
         const name = `${employees[i].name.first} ${employees[i].name.last}`;
@@ -83,6 +102,7 @@ function getSelectedProfile(employees, selected, prev, next) {
     }
 }
 
+/* Generates modal and appends to DOM */
 function generateModal(profile) {
     const container = document.createElement("div");
     container.className = "modal-container";
@@ -120,6 +140,8 @@ function generateModal(profile) {
     container.appendChild(modalButtons);
     body.insertBefore(container, script);
 }
+
+/* Formats birthday date and cell number */
 function format(data, type) {
     let newData = "";
     if (type === "date") {
@@ -131,7 +153,7 @@ function format(data, type) {
     return newData;
 }
 
-function openModal(element) {
+function getName(element) {
     let name = "";
         if (element.className === "card") {
             name = element.children[1].firstElementChild.textContent;
@@ -153,6 +175,8 @@ function changeModal(element) {
 //------------------------------
 //          SEARCH
 //------------------------------
+
+/* Adds searchbar and submit button */
 function addSearch() {
     const form = document.createElement("form");
     form.action = "#";
@@ -190,25 +214,35 @@ function search(employees, input) {
 //------------------------------
 //      EVENT LISTENERS
 //------------------------------
+
+
+/* Calls initial functions on page load */
 window.addEventListener("load", async () => {
     addSearch();
-
-    const employees = await getEmployees(dataUrl);
+    const employees = await getEmployees(dataUrl)
+                            .catch(error => {
+                                console.log(error);
+                                gallery.innerHTML = "<h1>Something went wrong.</h1>"
+                            });
     generateHTML(search(employees, getInput()));
     
+    /* Displays employees based on search submission */
     searchContainer.addEventListener("click", (e) => {
         if (e.target.id === "search-submit") {
             gallery.innerHTML = "";
             generateHTML(search(employees, getInput())); 
         }
     })
+
+    /* Real-time filtering on keyup in searchbar */
     searchContainer.addEventListener("keyup", (e) => {
         gallery.innerHTML = "";
         generateHTML(search(employees, getInput())); 
     })
     
+    /* Opens modal for selected employee. Handles all modal buttons  */
     body.addEventListener("click", (e) => {
-        getSelectedProfile(search(employees, getInput()), openModal(e.target));
+        getSelectedProfile(search(employees, getInput()), getName(e.target));
         
         if (e.target.tagName === "BUTTON" || e.target.parentElement.tagName === "BUTTON") {
             document.getElementsByClassName("modal-container")[0].remove();
