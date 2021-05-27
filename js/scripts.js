@@ -91,12 +91,21 @@ function getSelectedProfile(employees, selected, prev, next) {
     for (let i = 0; i < employees.length; i++) {
         const name = `${employees[i].name.first} ${employees[i].name.last}`;
         if (name === selected) {
-            if (prev === true && i > 0) {
-                generateModal(employees[i - 1]);
-            } else if (next === true && i < employees.length - 1) {
-                generateModal(employees[i + 1]);
+            let newIndex = i;
+            if (prev === true) {
+                newIndex = i - 1;
+                generateModal(employees[newIndex]);
+            } else if (next === true) {
+                newIndex = i + 1;
+                generateModal(employees[newIndex]);
             } else {
                 generateModal(employees[i]);
+            }
+            if (newIndex === 0) {
+                document.getElementById("modal-prev").remove();
+            }
+            if (newIndex === employees.length - 1) {
+                document.getElementById("modal-next").remove();
             }
         }
     }
